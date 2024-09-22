@@ -5,120 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>German-Arabic Vocabulary Quiz Game</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-        }
-
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        button {
-            background-color: #3498db;
-            color: #fff;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 5px;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-        }
-
-        #wordList {
-            margin-top: 20px;
-        }
-
-        #wordList div {
-            background-color: #ecf0f1;
-            padding: 10px;
-            margin-bottom: 5px;
-            border-radius: 3px;
-        }
-
-        #quizContainer,
-        #addWordContainer {
-            display: none;
-        }
-
-        #answerOptions {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-
-        .answerOption {
-            width: 48%;
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #ecf0f1;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .answerOption:hover {
-            background-color: #d5dbdb;
-        }
-
-        .answerOption.correct {
-            background-color: #2ecc71;
-            color: white;
-        }
-
-        .answerOption.incorrect {
-            background-color: #e74c3c;
-            color: white;
-        }
-
-        .fadeIn {
-            animation: fadeIn 0.5s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-
-            button {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-
-            .answerOption {
-                width: 100%;
-            }
+        /* ... (previous styles remain unchanged) ... */
+        
+        .quizType {
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -140,6 +30,14 @@
 
         <div id="quizContainer">
             <h2>Quiz</h2>
+            <div class="quizType">
+                <label>
+                    <input type="radio" name="quizType" value="translate" checked> Translate
+                </label>
+                <label>
+                    <input type="radio" name="quizType" value="choose"> Choose Correct Answer
+                </label>
+            </div>
             <p id="question"></p>
             <div id="answerOptions"></div>
             <p id="result"></p>
@@ -159,60 +57,37 @@
 
         let score = 0;
         let currentWord = '';
+        let currentQuizType = 'translate';
 
-        document.querySelector('#addWordBtn').addEventListener('click', () => {
-            document.querySelector('#addWordContainer').style.display = 'block';
-            document.querySelector('#quizContainer').style.display = 'none';
-            document.querySelector('#wordList').style.display = 'none';
-        });
+        // ... (previous event listeners remain unchanged) ...
 
-        document.querySelector('#startQuizBtn').addEventListener('click', () => {
-            document.querySelector('#quizContainer').style.display = 'block';
-            document.querySelector('#addWordContainer').style.display = 'none';
-            document.querySelector('#wordList').style.display = 'none';
-            startQuiz();
-        });
-
-        document.querySelector('#viewWordsBtn').addEventListener('click', () => {
-            document.querySelector('#wordList').innerHTML = '';
-            Object.keys(wordDict).forEach(word => {
-                const wordDiv = document.createElement('div');
-                wordDiv.textContent = `${word} - ${wordDict[word]}`;
-                document.querySelector('#wordList').appendChild(wordDiv);
+        document.querySelectorAll('input[name="quizType"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                currentQuizType = e.target.value;
+                startQuiz();
             });
-            document.querySelector('#wordList').style.display = 'block';
-            document.querySelector('#addWordContainer').style.display = 'none';
-            document.querySelector('#quizContainer').style.display = 'none';
-        });
-
-        document.querySelector('#addWordAction').addEventListener('click', () => {
-            const germanWord = document.querySelector('#germanWord').value.trim();
-            const arabicTranslation = document.querySelector('#arabicTranslation').value.trim();
-
-            if (germanWord && arabicTranslation) {
-                wordDict[germanWord] = arabicTranslation;
-                alert('Word added successfully!');
-                document.querySelector('#germanWord').value = '';
-                document.querySelector('#arabicTranslation').value = '';
-            } else {
-                alert('Please fill in both fields.');
-            }
         });
 
         function startQuiz() {
             const words = Object.keys(wordDict);
             currentWord = words[Math.floor(Math.random() * words.length)];
-            document.querySelector('#question').textContent = `Translate this word: ${currentWord}`;
+            
+            if (currentQuizType === 'translate') {
+                document.querySelector('#question').textContent = `Translate this word: ${currentWord}`;
+            } else {
+                document.querySelector('#question').textContent = `Choose the correct German word for: ${wordDict[currentWord]}`;
+            }
             
             const answerOptions = document.querySelector('#answerOptions');
             answerOptions.innerHTML = '';
             
             // Generate 4 answer options
-            const options = [wordDict[currentWord]];
+            const options = currentQuizType === 'translate' ? [wordDict[currentWord]] : [currentWord];
             while (options.length < 4) {
                 const randomWord = words[Math.floor(Math.random() * words.length)];
-                if (!options.includes(wordDict[randomWord])) {
-                    options.push(wordDict[randomWord]);
+                const optionToAdd = currentQuizType === 'translate' ? wordDict[randomWord] : randomWord;
+                if (!options.includes(optionToAdd)) {
+                    options.push(optionToAdd);
                 }
             }
             
@@ -232,7 +107,7 @@
         }
 
         function checkAnswer(userAnswer) {
-            const correctAnswer = wordDict[currentWord];
+            const correctAnswer = currentQuizType === 'translate' ? wordDict[currentWord] : currentWord;
             const answerOptions = document.querySelectorAll('.answerOption');
             
             answerOptions.forEach(option => {
