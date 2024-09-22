@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>German-Arabic Vocabulary Quiz Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        #wordList {
+            margin-top: 20px;
+        }
+        #wordList div {
+            background-color: #ecf0f1;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+        }
+        #quizContainer, #addWordContainer {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>German-Arabic Vocabulary Quiz Game</h1>
+        <div id="menu">
+            <button onclick="showAddWord()">Add a new word</button>
+            <button onclick="startQuiz()">Start quiz</button>
+            <button onclick="viewAllWords()">View all words</button>
+        </div>
+        <div id="addWordContainer">
+            <h2>Add a new word</h2>
+            <input type="text" id="germanWord" placeholder="Enter the German word">
+            <input type="text" id="arabicTranslation" placeholder="Enter the Arabic translation">
+            <button onclick="addWord()">Add Word</button>
+        </div>
+        <div id="quizContainer">
+            <h2>Quiz</h2>
+            <p id="question"></p>
+            <input type="text" id="answer" placeholder="Your answer">
+            <button onclick="submitAnswer()">Submit</button>
+            <p id="result"></p>
+            <p id="score"></p>
+        </div>
+        <div id="wordList"></div>
+    </div>
+
+    <script>
+        let wordDict = {
+            "der Name": "الاسم",
+            "der Vorname": "الاسم الأول",
+            "der Familienname": "اسم العائلة",
+            "der Nachname": "الكنية",
+            "die Straße": "الشارع",
+            "die Hausnummer": "رقم المنزل",
+            "die Nationalität": "الجنسية",
+            "der Wohnort": "مكان السكن",
+            "die Postleitzahl (PLZ)": "الرمز البريدي",
+            "das Telefon": "الهاتف",
+            "die Telefonnummer": "رقم الهاتف",
+            "die Handynummer": "رقم الهاتف المحمول",
+            "das Handy": "الهاتف المحمول",
+            "die E-Mail-Adresse": "عنوان البريد الإلكتروني",
+            "das Sprachenzentrum": "مركز اللغات",
+            "das Gespräch": "المحادثة",
+            "der Kursteilnehmer": "المشارك في الدورة",
+            "die Kursteilnehmerin": "المشاركة في الدورة",
+            "die Sprache": "اللغة",
+            "die Muttersprache": "اللغة الأم",
+            "die Zielsprache": "اللغة المستهدفة",
+            "der Tandempartner": "شريك التبادل اللغوي",
+            "die Tandempartnerin": "شريكة التبادل اللغوي",
+            "die Sprachschule": "مدرسة اللغات",
+            "der Kurs": "الدورة",
+            "der Intensivkurs": "الدورة المكثفة",
+            "der Vorbereitungskurs": "دورة التحضير",
+            "der Sommerkurs": "دورة الصيف",
+            "lernen": "التعلم",
+            "verstehen": "الفهم",
+            "sprechen": "التحدث",
+            "fragen": "السؤال",
+            "schreiben": "الكتابة",
+            "buchstabieren": "تهجئة",
+            "die Universität": "الجامعة",
+            "der Student": "الطالب",
+            "die Studentin": "الطالبة",
+            "der Studierende": "الدارس",
+            "der Professor": "الأستاذ",
+            "die Professorin": "الأستاذة",
+            "das Studienfach": "التخصص الدراسي",
+            "die Architektur": "الهندسة المعمارية",
+            "die Wirtschaftswissenschaften": "العلوم الاقتصادية",
+            "die Chemie": "الكيمياء",
+            "die Elektrotechnik": "الهندسة الكهربائية",
+            "die Germanistik": "الدراسات الألمانية",
+            "die Informatik": "علوم الحاسوب",
+            "Jura": "القانون",
+            "die Rechtswissenschaften": "العلوم القانونية",
+            "die Mathematik": "الرياضيات",
+            "die Medizin": "الطب",
+            "die Philosophie": "الفلسفة",
+            "die Physik": "الفيزياء",
+            "studieren": "الدراسة",
+            "der Lehrer": "المعلم",
+            "die Lehrerin": "المعلمة",
+            "der Sprachlehrer": "مدرس اللغة",
+            "der Deutschlehrer": "مدرس اللغة الألمانية",
+            "die Ingenieurin": "المهندسة",
+            "die Schüler": "التلاميذ",
+            "die Schülerin": "التلميذة",
+            "der Schriftsteller": "الكاتب",
+            "die Schriftstellerin": "الكاتبة",
+            "das Praktikum": "التدريب العملي",
+            "arbeiten": "العمل",
+            "das Hobby": "الهواية",
+            "Afrika": "أفريقيا",
+            "Amerika": "أمريكا",
+            "Asien": "آسيا",
+            "Australien": "أستراليا",
+            "Europa": "أوروبا",
+            "das Auto": "السيارة",
+            "das Genie": "العبقري",
+            "die Zahl": "العدد",
+            "der Nobelpreis": "جائزة نوبل",
+            "die Million": "المليون",
+            "die Milliarde": "المليار",
+            "das Interview": "المقابلة",
+            "die Literatur": "الأدب",
+            "heißen": "يدعى",
+            "kommen": "يأتي",
+            "vorstellen": "يقدم",
+            "wohnen": "يسكن",
+            "machen": "يعمل",
+            "beginnen": "يبدأ",
+            "sein": "يكون",
+            "gut": "جيد",
+            "neu": "جديد",
+            "polyglott": "متعدد اللغات",
+            "international": "دولي",
+            "beliebt": "محبوب",
+            "nett": "لطيف",
+            "groß": "كبير",
+            "sympathisch": "ودود",
+            "auch": "أيضًا",
+            "noch": "مازال",
+            "nicht": "ليس",
+            "schon": "بالفعل",
+            "dort": "هناك",
+            "jetzt": "الآن",
+            "ein bisschen": "قليلاً",
+            "zusammen": "معًا",
+            "hier": "هنا",
+            "Wie?": "كيف؟",
+            "Woher?": "من أين؟",
+            "aus": "من",
+            "in": "في",
+            "denn": "لأن",
+            "ja": "نعم",
+            "Herzlich willkommen!": "أهلاً وسهلاً!",
+            "Freut mich!": "يسرني!",
+            "Viel Spaß!": "أتمنى لك الكثير من المرح!",
+            "Ich spreche …": "أنا أتكلم …",
+            "… gut …": "… جيد …",
+            "… nicht so gut …": "… ليس جيدًا …",
+            "… ein bisschen …": "… قليلاً …",
+            "Was fällt auf?": "ماذا يلاحظ؟",
+            // ... (rest of the dictionary)
+        };
+
+        let currentQuestion = '';
+        let score = 0;
+        let totalQuestions = 0;
+
+        function showAddWord() {
+            document.getElementById('addWordContainer').style.display = 'block';
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('wordList').innerHTML = '';
+        }
+
+        function addWord() {
+            const german = document.getElementById('germanWord').value;
+            const arabic = document.getElementById('arabicTranslation').value;
+            if (german && arabic) {
+                wordDict[german] = arabic;
+                alert('Word added successfully!');
+                document.getElementById('germanWord').value = '';
+                document.getElementById('arabicTranslation').value = '';
+            } else {
+                alert('Please enter both German word and Arabic translation.');
+            }
+        }
+
+        function startQuiz() {
+            document.getElementById('quizContainer').style.display = 'block';
+            document.getElementById('addWordContainer').style.display = 'none';
+            document.getElementById('wordList').innerHTML = '';
+            score = 0;
+            totalQuestions = 0;
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            const words = Object.keys(wordDict);
+            if (words.length > 0) {
+                currentQuestion = words[Math.floor(Math.random() * words.length)];
+                document.getElementById('question').textContent = `What's the Arabic translation of '${currentQuestion}'?`;
+                document.getElementById('answer').value = '';
+                document.getElementById('result').textContent = '';
+                totalQuestions++;
+            } else {
+                alert('No words in the dictionary. Please add some words first.');
+            }
+        }
+
+        function submitAnswer() {
+            const userAnswer = document.getElementById('answer').value.trim();
+            const correctAnswer = wordDict[currentQuestion];
+            if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+                document.getElementById('result').textContent = 'Correct!';
+                score++;
+            } else {
+                document.getElementById('result').textContent = `Sorry, the correct answer is: ${correctAnswer}`;
+            }
+            document.getElementById('score').textContent = `Score: ${score}/${totalQuestions}`;
+            setTimeout(nextQuestion, 2000);
+        }
+
+        function viewAllWords() {
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('addWordContainer').style.display = 'none';
+            const wordListElement = document.getElementById('wordList');
+            wordListElement.innerHTML = '<h2>All Words</h2>';
+            for (const [german, arabic] of Object.entries(wordDict)) {
+                const wordElement = document.createElement('div');
+                wordElement.textContent = `${german}: ${arabic}`;
+                wordListElement.appendChild(wordElement);
+            }
+        }
+    </script>
+</body>
+</html>
