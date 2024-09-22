@@ -14,16 +14,19 @@
             padding: 20px;
             background-color: #f4f4f4;
         }
+
         h1 {
             color: #2c3e50;
             text-align: center;
         }
+
         .container {
             background-color: #fff;
             padding: 20px;
             border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
         button {
             background-color: #3498db;
             color: #fff;
@@ -34,9 +37,11 @@
             font-size: 16px;
             margin: 5px;
         }
+
         button:hover {
             background-color: #2980b9;
         }
+
         input[type="text"] {
             width: 100%;
             padding: 8px;
@@ -44,17 +49,32 @@
             border: 1px solid #ddd;
             border-radius: 3px;
         }
+
         #wordList {
             margin-top: 20px;
         }
+
         #wordList div {
             background-color: #ecf0f1;
             padding: 10px;
             margin-bottom: 5px;
             border-radius: 3px;
         }
-        #quizContainer, #addWordContainer {
+
+        #quizContainer,
+        #addWordContainer {
             display: none;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
@@ -62,445 +82,323 @@
     <div class="container">
         <h1>German-Arabic Vocabulary Quiz Game</h1>
         <div id="menu">
-            <button onclick="showAddWord()">Add a new word</button>
-            <button onclick="startQuiz()">Start quiz</button>
-            <button onclick="viewAllWords()">View all words</button>
+            <button id="addWordBtn">Add a new word</button>
+            <button id="startQuizBtn">Start quiz</button>
+            <button id="viewWordsBtn">View all words</button>
         </div>
+
         <div id="addWordContainer">
             <h2>Add a new word</h2>
             <input type="text" id="germanWord" placeholder="Enter the German word">
             <input type="text" id="arabicTranslation" placeholder="Enter the Arabic translation">
-            <button onclick="addWord()">Add Word</button>
+            <button id="addWordAction">Add Word</button>
         </div>
+
         <div id="quizContainer">
             <h2>Quiz</h2>
             <p id="question"></p>
             <input type="text" id="answer" placeholder="Your answer">
-            <button onclick="submitAnswer()">Submit</button>
+            <button id="submitAnswerBtn">Submit</button>
             <p id="result"></p>
             <p id="score"></p>
         </div>
+
         <div id="wordList"></div>
     </div>
 
     <script>
-        let wordDict = {
-            # Formular
-    "der Name": "الاسم",
-    "der Vorname": "الاسم الأول",
-    "der Familienname": "اسم العائلة",
-    "der Nachname": "الكنية",
-    "die Straße": "الشارع",
-    "die Hausnummer": "رقم المنزل",
-    "die Nationalität": "الجنسية",
-    "der Wohnort": "مكان السكن",
-    "die Postleitzahl (PLZ)": "الرمز البريدي",
-    "das Telefon": "الهاتف",
-    "die Telefonnummer": "رقم الهاتف",
-    "die Handynummer": "رقم الهاتف المحمول",
-    "das Handy": "الهاتف المحمول",
-    "die E-Mail-Adresse": "عنوان البريد الإلكتروني",
+        const wordDict = {
+            "der Name": "الاسم",
+            "der Vorname": "الاسم الأول",
+            "der Familienname": "اسم العائلة",
+"der Nachname": "الكنية",
+"die Straße": "الشارع",
+"die Hausnummer": "رقم المنزل",
+"die Nationalität": "الجنسية",
+"der Wohnort": "مكان السكن",
+"die Postleitzahl (PLZ)": "الرمز البريدي",
+"das Telefon": "الهاتف",
+"die Telefonnummer": "رقم الهاتف",
+"die Handynummer": "رقم الهاتف المحمول",
+"das Handy": "الهاتف المحمول",
+"die E-Mail-Adresse": "عنوان البريد الإلكتروني",
+"das Sprachenzentrum": "مركز اللغات",
+"das Gespräch": "المحادثة",
+"der Kursteilnehmer": "المشارك في الدورة",
+"die Kursteilnehmerin": "المشاركة في الدورة",
+"die Sprache": "اللغة",
+"die Muttersprache": "اللغة الأم",
+"die Zielsprache": "اللغة المستهدفة",
+"der Tandempartner": "شريك التبادل اللغوي",
+"die Tandempartnerin": "شريكة التبادل اللغوي",
+"die Sprachschule": "مدرسة اللغات",
+"der Kurs": "الدورة",
+"der Intensivkurs": "الدورة المكثفة",
+"der Vorbereitungskurs": "دورة التحضير",
+"der Sommerkurs": "دورة الصيف",
+"lernen": "التعلم",
+"verstehen": "الفهم",
+"sprechen": "التحدث",
+"fragen": "السؤال",
+"schreiben": "الكتابة",
+"buchstabieren": "تهجئة",
+"die Universität": "الجامعة",
+"der Student": "الطالب",
+"die Studentin": "الطالبة",
+"der Studierende": "الدارس",
+"der Professor": "الأستاذ",
+"die Professorin": "الأستاذة",
+"das Studienfach": "التخصص الدراسي",
+"die Architektur": "الهندسة المعمارية",
+"die Wirtschaftswissenschaften (Pl)": "العلوم الاقتصادية",
+"die Chemie": "الكيمياء",
+"die Elektrotechnik": "الهندسة الكهربائية",
+"die Germanistik": "الدراسات الألمانية",
+"die Informatik": "علوم الحاسوب",
+"Jura (Pl)": "القانون",
+"die Rechtswissenschaften (Pl)": "العلوم القانونية",
+"die Mathematik": "الرياضيات",
+"die Medizin": "الطب",
+"die Philosophie": "الفلسفة",
+"die Physik": "الفيزياء",
+"studieren": "الدراسة",
+"der Lehrer": "المعلم",
+"die Lehrerin": "المعلمة",
+"der Sprachlehrer": "مدرس اللغة",
+"der Deutschlehrer": "مدرس اللغة الألمانية",
+"die Ingenieurin": "المهندسة",
+"die Schüler": "التلاميذ",
+"die Schülerin": "التلميذة",
+"der Schriftsteller": "الكاتب",
+"die Schriftstellerin": "الكاتبة",
+"das Praktikum": "التدريب العملي",
+"arbeiten (als …)": "العمل (كـ …)",
+"das Hobby": "الهواية",
+"Afrika": "أفريقيا",
+"Amerika": "أمريكا",
+"Asien": "آسيا",
+"Australien": "أستراليا",
+"Europa": "أوروبا",
+"das Auto": "السيارة",
+"das Genie": "العبقري",
+"die Zahl": "العدد",
+"der Nobelpreis": "جائزة نوبل",
+"die Million": "المليون",
+"die Milliarde": "المليار",
+"das Interview": "المقابلة",
+"die Literatur": "الأدب",
+"heißen": "يدعى",
+"kommen": "يأتي",
+"vorstellen (sich)": "يقدم (نفسه)",
+"wohnen": "يسكن",
+"machen": "يعمل",
+"beginnen": "يبدأ",
+"sein": "يكون",
+"gut": "جيد",
+"neu": "جديد",
+"polyglott": "متعدد اللغات",
+"international": "دولي",
+"beliebt": "محبوب",
+"nett": "لطيف",
+"groß": "كبير",
+"sympathisch": "ودود",
+"auch": "أيضًا",
+"noch": "مازال",
+"nicht": "ليس",
+"schon": "بالفعل",
+"dort": "هناك",
+"jetzt": "الآن",
+"ein bisschen": "قليلاً",
+"zusammen": "معًا",
+"hier": "هنا",
+"Wie?": "كيف؟",
+"Woher?": "من أين؟",
+"aus (Rio/Brasilien)": "من (ريو/البرازيل)",
+"in (Rio/Brasilien)": "في (ريو/البرازيل)",
+"denn": "لأن",
+"ja": "نعم",
+"Herzlich willkommen!": "أهلاً وسهلاً!",
+"Freut mich!": "يسرني!",
+"Viel Spaß!": "أتمنى لك الكثير من المرح!",
+"Ich spreche …": "أنا أتكلم …",
+"… gut …": "… جيد …",
+"… nicht so gut …": "… ليس جيدًا …",
+"… ein bisschen …": "… قليلاً …",
+"Was fällt auf?": "ماذا يلاحظ؟",
+"die Technik": "التقنية",
+"der Plattenspieler": "مشغل الأسطوانات",
+"die Schallplatte": "الأسطوانة",
+"das Tablet": "الجهاز اللوحي",
+"die Rechenmaschine": "آلة حاسبة",
+"das Telefon": "الهاتف",
+"das Navigationsgerät": "جهاز الملاحة",
+"die Kamera": "الكاميرا",
+"das Handy": "الهاتف المحمول",
+"die Diskette": "القرص المرن",
+"der Akku": "البطارية",
+"die Kassette": "الكاسيت",
+"die Musikkassette": "كاسيت الموسيقى",
+"der USB-Stick": "الفلاشة",
+"der Computer": "الكمبيوتر",
+"der Laptop": "اللاب توب",
+"das Smartphone": "الهاتف الذكي",
+"das Foto": "الصورة",
+"der Fotoapparat": "آلة التصوير",
+"der mp3-Spieler": "مشغل MP3",
+"der Stammbaum": "شجرة العائلة",
+"der Partner": "الشريك",
+"die Partnerin": "الشريكة",
+"geschieden": "مطلق",
+"getrennt leben": "يعيش منفصل",
+"der Single": "الأعزب",
+"heiraten": "يتزوج",
+"verheiratet": "متزوج",
+"erziehen": "يربي",
+"die Familie": "العائلة",
+"die Kleinfamilie": "العائلة الصغيرة",
+"Patchworkfamilie": "العائلة المختلطة",
+"das Mitglied": "العضو",
+"das Familienmitglied": "عضو العائلة",
+"die Eltern": "الوالدين",
+"Schwiegereltern": "الوالدين من الزوج/الزوجة",
+"der Vater": "الأب",
+"die Mutter": "الأم",
+"das Einzelkind": "الطفل الوحيد",
+"der Sohn": "الابن",
+"die Tochter": "الابنة",
+"die Großeltern": "الأجداد",
+"die Großmutter": "الجدة",
+"der Großvater": "الجد",
+"der Urgroßvater": "الجد الأكبر",
+"die Urgroßmutter": "الجدة الأكبر",
+"der Enkel": "الحفيد",
+"die Enkelin": "الحفيدة",
+"die Geschwister": "الإخوة والأخوات",
+"der Bruder": "الأخ",
+"die Schwester": "الأخت",
+"der Schwager": "زوج الأخت",
+"die Schwägerin": "زوجة الأخ",
+"der Onkel": "العم / الخال",
+"die Tante": "العمة / الخالة",
+"der Neffe": "ابن الأخ / الأخت",
+"die Nichte": "ابنة الأخ / الأخت",
+"das Restaurant": "المطعم",
+"der Gast": "الضيف",
+"das Gericht": "الطبق",
+"das Menü": "قائمة الطعام",
+"die Vorspeise": "المقبلات",
+"die Spezialität": "التخصص",
+"das Wasser (hier nur Sg.)": "الماء",
+"Mineralwasser": "ماء معدني",
+"die Kohlensäure (hier nur Sg.)": "ماء غازي",
+"die Cola (nur Sg.)": "الكولا",
+"die Limonade (nur Sg.)": "الليمونادة",
+"das Bier": "البيرة",
+"der Alkohol (nur Sg.)": "الكحول",
+"der Wein": "النبيذ",
+"Weißwein": "النبيذ الأبيض",
+"Rotwein": "النبيذ الأحمر",
+"der Salat": "السلطة",
+"die Suppe": "الشوربة",
+"das Schnitzel": "شريحة لحم مقلية",
+"die Pommes frites": "البطاطس المقلية",
+"das Rindfleisch": "لحم البقر",
+"der Burger": "البرجر",
+"der Fisch": "السمك",
+"das Zanderfilet": "فيليه سمك الزاندر",
+"das Ketchup": "الكاتشاب",
+"der Kloß": "كرة من العجين أو اللحم",
+"der Knödel": "كرة من العجين أو اللحم",
+"das Dessert": "الحلوى",
+"der Kuchen": "الكيك",
+"der Apfelkuchen": "فطيرة التفاح",
+"die Torte": "التورتة",
+"das Eis": "الآيس كريم",
+"die Schokolade": "الشوكولاته",
+"der Apfel": "التفاح",
+"der Apfelsaft": "عصير التفاح",
+"die Birne": "الإجاص",
+"die Orange": "البرتقال",
+"die Tomate": "الطماطم",
+"die Zitrone": "الليمون",
+"die Sahne": "القشدة",
+"Das schmeckt gut.": "طعمها جيد",
+"Das ist lecker.": "إنه لذيذ",
+"bestellen": "طلب",
+"nehmen": "أخذ",
+"mögen": "يحب",
+"trinken": "يشرب",
+"kochen": "يطبخ",
+"backen": "يخبز",
+"gefallen": "أعجب",
 
-    # Sprachen lernen
-    "das Sprachenzentrum": "مركز اللغات",
-    "das Gespräch": "المحادثة",
-    "der Kursteilnehmer": "المشارك في الدورة",
-    "die Kursteilnehmerin": "المشاركة في الدورة",
-    "die Sprache": "اللغة",
-    "die Muttersprache": "اللغة الأم",
-    "die Zielsprache": "اللغة المستهدفة",
-    "der Tandempartner": "شريك التبادل اللغوي",
-    "die Tandempartnerin": "شريكة التبادل اللغوي",
-    "die Sprachschule": "مدرسة اللغات",
-    "der Kurs": "الدورة",
-    "der Intensivkurs": "الدورة المكثفة",
-    "der Vorbereitungskurs": "دورة التحضير",
-    "der Sommerkurs": "دورة الصيف",
-    "lernen": "التعلم",
-    "verstehen": "الفهم",
-    "sprechen": "التحدث",
-    "fragen": "السؤال",
-    "schreiben": "الكتابة",
-    "buchstabieren": "تهجئة",
-
-    # Universität und Studium
-    "die Universität": "الجامعة",
-    "der Student": "الطالب",
-    "die Studentin": "الطالبة",
-    "der Studierende": "الدارس",
-    "der Professor": "الأستاذ",
-    "die Professorin": "الأستاذة",
-    "das Studienfach": "التخصص الدراسي",
-    "die Architektur": "الهندسة المعمارية",
-    "die Wirtschaftswissenschaften (Pl)": "العلوم الاقتصادية",
-    "die Chemie": "الكيمياء",
-    "die Elektrotechnik": "الهندسة الكهربائية",
-    "die Germanistik": "الدراسات الألمانية",
-    "die Informatik": "علوم الحاسوب",
-    "Jura (Pl)": "القانون",
-    "die Rechtswissenschaften (Pl)": "العلوم القانونية",
-    "die Mathematik": "الرياضيات",
-    "die Medizin": "الطب",
-    "die Philosophie": "الفلسفة",
-    "die Physik": "الفيزياء",
-    "studieren": "الدراسة",
-
-    # Arbeit und Beruf
-    "der Lehrer": "المعلم",
-    "die Lehrerin": "المعلمة",
-    "der Sprachlehrer": "مدرس اللغة",
-    "der Deutschlehrer": "مدرس اللغة الألمانية",
-    "die Ingenieurin": "المهندسة",
-    "die Schüler": "التلاميذ",
-    "die Schülerin": "التلميذة",
-    "der Schriftsteller": "الكاتب",
-    "die Schriftstellerin": "الكاتبة",
-    "das Praktikum": "التدريب العملي",
-    "arbeiten (als …)": "العمل (كـ …)",
-
-    # Freizeit
-    "das Hobby": "الهواية",
-
-    # Kontinente
-    "Afrika": "أفريقيا",
-    "Amerika": "أمريكا",
-    "Asien": "آسيا",
-    "Australien": "أستراليا",
-    "Europa": "أوروبا",
-
-    # Sonstiges
-    "das Auto": "السيارة",
-    "das Genie": "العبقري",
-    "die Zahl": "العدد",
-    "der Nobelpreis": "جائزة نوبل",
-    "die Million": "المليون",
-    "die Milliarde": "المليار",
-    "das Interview": "المقابلة",
-    "die Literatur": "الأدب",
-
-    # Verben
-    "heißen": "يدعى",
-    "kommen": "يأتي",
-    "vorstellen (sich)": "يقدم (نفسه)",
-    "wohnen": "يسكن",
-    "machen": "يعمل",
-    "beginnen": "يبدأ",
-    "sein": "يكون",
-
-    # Adjektive
-    "gut": "جيد",
-    "neu": "جديد",
-    "polyglott": "متعدد اللغات",
-    "international": "دولي",
-    "beliebt": "محبوب",
-    "nett": "لطيف",
-    "groß": "كبير",
-    "sympathisch": "ودود",
-
-    # Adverbien
-    "auch": "أيضًا",
-    "noch": "مازال",
-    "nicht": "ليس",
-    "schon": "بالفعل",
-    "dort": "هناك",
-    "jetzt": "الآن",
-    "ein bisschen": "قليلاً",
-    "zusammen": "معًا",
-    "hier": "هنا",
-
-    # Fragewörter
-    "Wie?": "كيف؟",
-    "Woher?": "من أين؟",
-
-    # Präpositionen
-    "aus (Rio/Brasilien)": "من (ريو/البرازيل)",
-    "in (Rio/Brasilien)": "في (ريو/البرازيل)",
-
-    # Partikeln
-    "denn": "لأن",
-    "ja": "نعم",
-
-    # Redemittel / Ausdrücke
-    "Herzlich willkommen!": "أهلاً وسهلاً!",
-    "Freut mich!": "يسرني!",
-    "Viel Spaß!": "أتمنى لك الكثير من المرح!",
-    "Ich spreche …": "أنا أتكلم …",
-    "… gut …": "… جيد …",
-    "… nicht so gut …": "… ليس جيدًا …",
-    "… ein bisschen …": "… قليلاً …",
-    "Was fällt auf?": "ماذا يلاحظ؟",
-
-        # Technik/Geräte
-    "die Technik": "التقنية",
-    "der Plattenspieler": "مشغل الأسطوانات",
-    "die Schallplatte": "الأسطوانة",
-    "das Tablet": "الجهاز اللوحي",
-    "die Rechenmaschine": "آلة حاسبة",
-    "das Telefon": "الهاتف",
-    "das Navigationsgerät": "جهاز الملاحة",
-    "die Kamera": "الكاميرا",
-    "das Handy": "الهاتف المحمول",
-    "die Diskette": "القرص المرن",
-    "der Akku": "البطارية",
-    "die Kassette": "الكاسيت",
-    "die Musikkassette": "كاسيت الموسيقى",
-    "der USB-Stick": "الفلاشة",
-    "der Computer": "الكمبيوتر",
-    "der Laptop": "اللاب توب",
-    "das Smartphone": "الهاتف الذكي",
-    "das Foto": "الصورة",
-    "der Fotoapparat": "آلة التصوير",
-    "der mp3-Spieler": "مشغل MP3",
-
-    # Familie
-    "der Stammbaum": "شجرة العائلة",
-    "der Partner": "الشريك",
-    "die Partnerin": "الشريكة",
-    "geschieden": "مطلق",
-    "getrennt leben": "يعيش منفصل",
-    "der Single": "الأعزب",
-    "heiraten": "يتزوج",
-    "verheiratet": "متزوج",
-    "erziehen": "يربي",
-    "die Familie": "العائلة",
-    "die Kleinfamilie": "العائلة الصغيرة",
-    "Patchworkfamilie": "العائلة المختلطة",
-    "das Mitglied": "العضو",
-    "das Familienmitglied": "عضو العائلة",
-    "die Eltern": "الوالدين",
-    "Schwiegereltern": "الوالدين من الزوج/الزوجة",
-    "der Vater": "الأب",
-    "die Mutter": "الأم",
-    "das Einzelkind": "الطفل الوحيد",
-    "der Sohn": "الابن",
-    "die Tochter": "الابنة",
-    "die Großeltern": "الأجداد",
-    "die Großmutter": "الجدة",
-    "der Großvater": "الجد",
-    "der Urgroßvater": "الجد الأكبر",
-    "die Urgroßmutter": "الجدة الأكبر",
-    "der Enkel": "الحفيد",
-    "die Enkelin": "الحفيدة",
-    "die Geschwister": "الإخوة والأخوات",
-    "der Bruder": "الأخ",
-    "die Schwester": "الأخت",
-    "der Schwager": "زوج الأخت",
-    "die Schwägerin": "زوجة الأخ",
-    "der Onkel": "العم / الخال",
-    "die Tante": "العمة / الخالة",
-    "der Neffe": "ابن الأخ / الأخت",
-    "die Nichte": "ابنة الأخ / الأخت",
-
-    # Restaurant/Essen
-    "das Restaurant": "المطعم",
-    "der Gast": "الضيف",
-    "das Gericht": "الطبق",
-    "das Menü": "قائمة الطعام",
-    "die Vorspeise": "المقبلات",
-    "die Spezialität": "التخصص",
-    "das Wasser (hier nur Sg.)": "الماء",
-    "Mineralwasser": "ماء معدني",
-    "die Kohlensäure (hier nur Sg.)": "ماء غازي",
-    "die Cola (nur Sg.)": "الكولا",
-    "die Limonade (nur Sg.)": "الليمونادة",
-    "das Bier": "البيرة",
-    "der Alkohol (nur Sg.)": "الكحول",
-    "der Wein": "النبيذ",
-    "Weißwein": "النبيذ الأبيض",
-    "Rotwein": "النبيذ الأحمر",
-    "der Salat": "السلطة",
-    "die Suppe": "الشوربة",
-    "das Schnitzel": "شريحة لحم مقلية",
-    "die Pommes frites": "البطاطس المقلية",
-    "das Rindfleisch": "لحم البقر",
-    "der Burger": "البرجر",
-    "das Schnitzel": "شريحة اللحم",
-    "der Fisch": "السمك",
-    "das Zanderfilet": "فيليه سمك",
-    "die Kartoffel": "البطاطس",
-    "das Dessert": "الحلوى",
-    "die Sahne": "الكريمة",
-    "das Eis": "الآيس كريم",
-    "der Apfelstrudel": "فطيرة التفاح",
-    "das Trinkgeld": "البقشيش",
-    "servieren": "يخدم",
-    "bestellen": "يطلب",
-    "zahlen": "يدفع",
-    "kosten": "يكلف",
-    "essen": "يأكل",
-    "trinken": "يشرب",
-    "vegetarisch": "نباتي",
-    "vegan": "نباتي صارم",
-    "geöffnet": "مفتوح",
-    "geschlossen": "مغلق",
-
-    # Wochentage
-    "der Montag": "الإثنين",
-    "der Dienstag": "الثلاثاء",
-    "der Mittwoch": "الأربعاء",
-    "der Donnerstag": "الخميس",
-    "der Freitag": "الجمعة",
-    "der Samstag": "السبت",
-    "der Sonntag": "الأحد",
-    "das Wochenende": "عطلة نهاية الأسبوع",
-    "der Feiertag": "العطلة",
-    "der Ruhetag": "يوم الراحة",
-
-    # An der Universität
-    "die Bibliothek": "المكتبة",
-    "die Online-Bibliothek": "المكتبة الإلكترونية",
-
-    # Arbeit und Beruf
-    "der Kellner": "النادل",
-    "die Kellnerin": "النادلة",
-
-    # Sonstiges
-    "der Mensch": "الإنسان",
-    "das Ding": "الشيء",
-    "der Gegenstand": "الشيء",
-    "das Patchwork (nur Sg.)": "الحرف اليدوية",
-    "die Kreditkarte": "بطاقة الائتمان",
-    "die Telefonkarte": "بطاقة الهاتف",
-    "das Foto": "الصورة",
-    "der Film": "الفيلم",
-    "der Freund": "الصديق",
-    "die Freundin": "الصديقة",
-    "der Junge": "الصبي",
-    "das Mädchen": "الفتاة",
-    "die Altstadt": "البلدة القديمة",
-    "die Regel": "القانون",
-    "die Straße": "الشارع",
-    "die Stadt": "المدينة",
-    "die Musik (hier nur Sg.)": "الموسيقى",
-
-    # Verben
-    "funktionieren": "يعمل (للأجهزة)",
-    "brauchen": "يحتاج",
-    "bekommen": "يحصل على",
-    "benutzen": "يستخدم",
-    "leben": "يعيش",
-    "erzählen": "يخبر",
-    "es gibt + A": "هناك",
-    "kennen": "يعرف",
-    "möchten": "يريد",
-    "haben": "يمتلك",
-    "hören": "يسمع",
-
-    # Adjektive
-    "modern": "حديث",
-    "altmodisch": "قديم الطراز",
-    "normal": "عادي",
-    "allein": "وحيد",
-    "hoch": "مرتفع",
-    "alt": "قديم",
-    "unmöglich": "مستحيل",
-    "ideal": "مثالي",
-    "natürlich": "طبيعي",
-    "ziemlich": "إلى حد كبير",
-    "richtig": "صحيح",
-    "spät": "متأخر",
-    "gern": "بسرور",
-    "interessant": "مثير",
-    "wichtig": "مهم",
-    "groß": "كبير",
-
-    # Adverbien
-    "heute": "اليوم",
-    "nur": "فقط",
-    "über": "أكثر من",
-    "sogar": "حتى",
-    "mehr": "أكثر",
-
-    # Fragewörter
-    "Wer?": "من؟",
-    "Was?": "ماذا؟",
-    "Wie?": "كيف؟",
-    "Wann?": "متى؟",
-
-    # Pronomen / Artikel
-    "wenig + viel": "قليل + كثير",
-    "alles": "كل شيء",
-
-    # Präpositionen
-    "mit (Salat)": "مع (السلطة)",
-    "ohne (Pommes frites)": "بدون (بطاطس مقلية)",
-    "am (Montag)": "في (يوم الإثنين)",
-    "um (14.00 Uhr)": "في (الساعة 14:00)",
-    "von (Jan)": "من (يان)",
-
-    # Redewendungen
-    "Er schreibt einen Artikel über Technik/...": "هو يكتب مقالة عن التقنية/..."
-            // ... (rest of the dictionary)
+            // Additional words...
         };
 
-        let currentQuestion = '';
         let score = 0;
-        let totalQuestions = 0;
+        let currentWord = '';
 
-        function showAddWord() {
-            document.getElementById('addWordContainer').style.display = 'block';
-            document.getElementById('quizContainer').style.display = 'none';
-            document.getElementById('wordList').innerHTML = '';
-        }
+        document.querySelector('#addWordBtn').addEventListener('click', () => {
+            document.querySelector('#addWordContainer').style.display = 'block';
+            document.querySelector('#quizContainer').style.display = 'none';
+            document.querySelector('#wordList').style.display = 'none';
+        });
 
-        function addWord() {
-            const german = document.getElementById('germanWord').value;
-            const arabic = document.getElementById('arabicTranslation').value;
-            if (german && arabic) {
-                wordDict[german] = arabic;
+        document.querySelector('#startQuizBtn').addEventListener('click', () => {
+            document.querySelector('#quizContainer').style.display = 'block';
+            document.querySelector('#addWordContainer').style.display = 'none';
+            document.querySelector('#wordList').style.display = 'none';
+            startQuiz();
+        });
+
+        document.querySelector('#viewWordsBtn').addEventListener('click', () => {
+            document.querySelector('#wordList').innerHTML = '';
+            Object.keys(wordDict).forEach(word => {
+                const wordDiv = document.createElement('div');
+                wordDiv.textContent = `${word} - ${wordDict[word]}`;
+                document.querySelector('#wordList').appendChild(wordDiv);
+            });
+            document.querySelector('#wordList').style.display = 'block';
+            document.querySelector('#addWordContainer').style.display = 'none';
+            document.querySelector('#quizContainer').style.display = 'none';
+        });
+
+        document.querySelector('#addWordAction').addEventListener('click', () => {
+            const germanWord = document.querySelector('#germanWord').value.trim();
+            const arabicTranslation = document.querySelector('#arabicTranslation').value.trim();
+
+            if (germanWord && arabicTranslation) {
+                wordDict[germanWord] = arabicTranslation;
                 alert('Word added successfully!');
-                document.getElementById('germanWord').value = '';
-                document.getElementById('arabicTranslation').value = '';
+                document.querySelector('#germanWord').value = '';
+                document.querySelector('#arabicTranslation').value = '';
             } else {
-                alert('Please enter both German word and Arabic translation.');
+                alert('Please fill in both fields.');
             }
-        }
+        });
+
+        document.querySelector('#submitAnswerBtn').addEventListener('click', submitAnswer);
 
         function startQuiz() {
-            document.getElementById('quizContainer').style.display = 'block';
-            document.getElementById('addWordContainer').style.display = 'none';
-            document.getElementById('wordList').innerHTML = '';
-            score = 0;
-            totalQuestions = 0;
-            nextQuestion();
-        }
-
-        function nextQuestion() {
             const words = Object.keys(wordDict);
-            if (words.length > 0) {
-                currentQuestion = words[Math.floor(Math.random() * words.length)];
-                document.getElementById('question').textContent = `What's the Arabic translation of '${currentQuestion}'?`;
-                document.getElementById('answer').value = '';
-                document.getElementById('result').textContent = '';
-                totalQuestions++;
-            } else {
-                alert('No words in the dictionary. Please add some words first.');
-            }
+            currentWord = words[Math.floor(Math.random() * words.length)];
+            document.querySelector('#question').textContent = `Translate this word: ${currentWord}`;
         }
 
         function submitAnswer() {
-            const userAnswer = document.getElementById('answer').value.trim();
-            const correctAnswer = wordDict[currentQuestion];
-            if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
-                document.getElementById('result').textContent = 'Correct!';
+            const userAnswer = document.querySelector('#answer').value.trim();
+            const correctAnswer = wordDict[currentWord];
+
+            if (userAnswer === correctAnswer) {
+                document.querySelector('#result').textContent = 'Correct!';
                 score++;
             } else {
-                document.getElementById('result').textContent = `Sorry, the correct answer is: ${correctAnswer}`;
+                document.querySelector('#result').textContent = `Wrong. The correct answer was ${correctAnswer}.`;
             }
-            document.getElementById('score').textContent = `Score: ${score}/${totalQuestions}`;
-            setTimeout(nextQuestion, 2000);
-        }
 
-        function viewAllWords() {
-            document.getElementById('quizContainer').style.display = 'none';
-            document.getElementById('addWordContainer').style.display = 'none';
-            const wordListElement = document.getElementById('wordList');
-            wordListElement.innerHTML = '<h2>All Words</h2>';
-            for (const [german, arabic] of Object.entries(wordDict)) {
-                const wordElement = document.createElement('div');
-                wordElement.textContent = `${german}: ${arabic}`;
-                wordListElement.appendChild(wordElement);
-            }
+            document.querySelector('#score').textContent = `Score: ${score}`;
+            document.querySelector('#answer').value = '';
+            startQuiz();
         }
     </script>
 </body>
