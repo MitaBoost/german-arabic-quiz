@@ -86,10 +86,6 @@
             background-color: #e74c3c;
         }
 
-        .quizType {
-            margin-bottom: 15px;
-        }
-
         #question {
             font-size: 18px;
             margin-bottom: 10px;
@@ -332,6 +328,7 @@
             "die Spezialität": "التخصص",
             "das Wasser (hier nur Sg.)": "الماء",
             "Mineralwasser": "ماء معدني",
+            // Add more words here...
         };
 
         let score = 0;
@@ -438,70 +435,10 @@
             setTimeout(startQuiz, 1500); // Move to next question after 1.5s
         }
 
-        // Word Matching Function
-        function startWordMatching() {
-            const words = Object.keys(wordDict);
-            const correctWord = words[Math.floor(Math.random() * words.length)];
-            const correctTranslation = wordDict[correctWord];
-            const translations = [correctTranslation];
-
-            while (translations.length < 4) {
-                const randomTranslation = wordDict[words[Math.floor(Math.random() * words.length)]];
-                if (!translations.includes(randomTranslation)) {
-                    translations.push(randomTranslation);
-                }
-            }
-
-            translations.sort(() => Math.random() - 0.5);
-
-            document.querySelector('#matchOptions').innerHTML = `
-                <p>Match the German word <strong>${correctWord}</strong> with its Arabic translation:</p>
-                ${translations.map(trans => `<button class="answerOption">${trans}</button>`).join('')}
-            `;
-
-            document.querySelectorAll('.answerOption').forEach(button => {
-                button.addEventListener('click', () => {
-                    if (button.textContent === correctTranslation) {
-                        button.classList.add('correct');
-                        document.querySelector('#matchResult').textContent = 'Correct!';
-                    } else {
-                        button.classList.add('incorrect');
-                        document.querySelector('#matchResult').textContent = `Incorrect! The correct answer was ${correctTranslation}.`;
-                    }
-                    setTimeout(startWordMatching, 1500); // Move to next question after 1.5s
-                });
-            });
-        }
-
-        // Fill in the Blanks Function
-        function startFillInTheBlanks() {
-            const words = Object.keys(wordDict);
-            const randomWord = words[Math.floor(Math.random() * words.length)];
-            const sentence = `Ich habe ein ____ .`;
-
-            document.querySelector('#blankSentence').textContent = sentence;
-            document.querySelector('#blankInput').value = '';
-            document.querySelector('#blankResult').textContent = '';
-
-            document.querySelector('#submitBlankBtn').addEventListener('click', () => {
-                const userAnswer = document.querySelector('#blankInput').value.trim();
-                if (userAnswer === randomWord) {
-                    document.querySelector('#blankResult').textContent = 'Correct!';
-                    score++;
-                } else {
-                    document.querySelector('#blankResult').textContent = `Incorrect! The correct word was ${randomWord}.`;
-                }
-                document.querySelector('#score').textContent = `Score: ${score}`;
-            });
-        }
-
-        // Utility Function to Hide All Containers
         function hideAllContainers() {
-            document.querySelector('#addWordContainer').style.display = 'none';
-            document.querySelector('#quizContainer').style.display = 'none';
-            document.querySelector('#wordMatchContainer').style.display = 'none';
-            document.querySelector('#fillBlankContainer').style.display = 'none';
-            document.querySelector('#wordList').style.display = 'none';
+            document.querySelectorAll('.container > div').forEach(div => {
+                div.style.display = 'none';
+            });
         }
     </script>
 </body>
