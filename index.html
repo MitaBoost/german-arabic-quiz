@@ -15,7 +15,7 @@
             background-color: #f4f4f4;
         }
 
-        h1 {
+        h1, h2, h3 {
             color: #2c3e50;
             text-align: center;
         }
@@ -50,11 +50,11 @@
             border-radius: 3px;
         }
 
-        #wordList {
+        #wordList, #vocabularyList {
             margin-top: 20px;
         }
 
-        #wordList div {
+        #wordList div, #vocabularyList div {
             background-color: #ecf0f1;
             padding: 10px;
             margin-bottom: 5px;
@@ -62,7 +62,8 @@
         }
 
         #quizContainer,
-        #addWordContainer {
+        #addWordContainer,
+        #vocabularyListContainer {
             display: none;
         }
 
@@ -119,6 +120,28 @@
         #question span {
             color: #e74c3c;
         }
+
+        .vocabulary-category {
+            margin-bottom: 20px;
+        }
+
+        .vocabulary-category h3 {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .vocabulary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .vocabulary-item:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
@@ -128,6 +151,7 @@
             <button id="addWordBtn">Add a new word</button>
             <button id="startQuizBtn">Start quiz</button>
             <button id="viewWordsBtn">View all words</button>
+            <button id="viewVocabularyBtn">View A1 Vocabulary List</button>
         </div>
 
         <div id="addWordContainer">
@@ -154,6 +178,11 @@
         </div>
 
         <div id="wordList"></div>
+
+        <div id="vocabularyListContainer">
+            <h2>Complete Deutsch A1 Vocabulary List</h2>
+            <div id="vocabularyList"></div>
+        </div>
     </div>
 
     <script>
@@ -161,13 +190,386 @@
             "der Name": "الاسم",
             "der Vorname": "الاسم الأول",
             "der Familienname": "اسم العائلة",
-            "die Adresse": "العنوان",
+            "der Nachname": "الكنية",
+            "die Straße": "الشارع",
+            "die Hausnummer": "رقم المنزل",
+            "die Nationalität": "الجنسية",
+            "der Wohnort": "مكان السكن",
+            "die Postleitzahl (PLZ)": "الرمز البريدي",
+            "das Telefon": "الهاتف",
             "die Telefonnummer": "رقم الهاتف",
-            "die E-Mail": "البريد الإلكتروني",
-            "das Alter": "العمر",
-            "der Geburtstag": "عيد الميلاد",
-            "der Beruf": "المهنة",
-            "die Nationalität": "الجنسية"
+            "die Handynummer": "رقم الهاتف المحمول",
+            "das Handy": "الهاتف المحمول",
+            "die E-Mail-Adresse": "عنوان البريد الإلكتروني",
+            "das Sprachenzentrum": "مركز اللغات",
+            "das Gespräch": "المحادثة",
+            "der Kursteilnehmer": "المشارك في الدورة",
+            "die Kursteilnehmerin": "المشاركة في الدورة",
+            "die Sprache": "اللغة",
+            "die Muttersprache": "اللغة الأم",
+            "die Zielsprache": "اللغة المستهدفة",
+            "der Tandempartner": "شريك التبادل اللغوي",
+            "die Tandempartnerin": "شريكة التبادل اللغوي",
+            "die Sprachschule": "مدرسة اللغات",
+            "der Kurs": "الدورة",
+            "der Intensivkurs": "الدورة المكثفة",
+            "der Vorbereitungskurs": "دورة التحضير",
+            "der Sommerkurs": "دورة الصيف",
+            "lernen": "التعلم",
+            "verstehen": "الفهم",
+            "sprechen": "التحدث",
+            "fragen": "السؤال",
+            "schreiben": "الكتابة",
+            "buchstabieren": "تهجئة",
+            "die Universität": "الجامعة",
+            "der Student": "الطالب",
+            "die Studentin": "الطالبة",
+            "der Studierende": "الدارس",
+            "der Professor": "الأستاذ",
+            "die Professorin": "الأستاذة",
+            "das Studienfach": "التخصص الدراسي",
+            "die Architektur": "الهندسة المعمارية",
+            "die Wirtschaftswissenschaften (Pl)": "العلوم الاقتصادية",
+            "die Chemie": "الكيمياء",
+            "die Elektrotechnik": "الهندسة الكهربائية",
+            "die Germanistik": "الدراسات الألمانية",
+            "die Informatik": "علوم الحاسوب",
+            "Jura (Pl)": "القانون",
+            "die Rechtswissenschaften (Pl)": "العلوم القانونية",
+            "die Mathematik": "الرياضيات",
+            "die Medizin": "الطب",
+            "die Philosophie": "الفلسفة",
+            "die Physik": "الفيزياء",
+            "studieren": "الدراسة",
+            "der Lehrer": "المعلم",
+            "die Lehrerin": "المعلمة",
+            "der Sprachlehrer": "مدرس اللغة",
+            "der Deutschlehrer": "مدرس اللغة الألمانية",
+            "die Ingenieurin": "المهندسة",
+            "die Schüler": "التلاميذ",
+            "die Schülerin": "التلميذة",
+            "der Schriftsteller": "الكاتب",
+            "die Schriftstellerin": "الكاتبة",
+            "das Praktikum": "التدريب العملي",
+            "arbeiten (als …)": "العمل (كـ …)",
+            "das Hobby": "الهواية",
+            "Afrika": "أفريقيا",
+            "Amerika": "أمريكا",
+            "Asien": "آسيا",
+            "Australien": "أستراليا",
+            "Europa": "أوروبا",
+            "das Auto": "السيارة",
+            "das Genie": "العبقري",
+            "die Zahl": "العدد",
+            "der Nobelpreis": "جائزة نوبل",
+            "die Million": "المليون",
+            "die Milliarde": "المليار",
+            "das Interview": "المقابلة",
+            "die Literatur": "الأدب",
+            "heißen": "يدعى",
+            "kommen": "يأتي",
+            "vorstellen (sich)": "يقدم (نفسه)",
+            "wohnen": "يسكن",
+            "machen": "يعمل",
+            "beginnen": "يبدأ",
+            "sein": "يكون",
+            "gut": "جيد",
+            "neu": "جديد",
+            "polyglott": "متعدد اللغات",
+            "international": "دولي",
+            "beliebt": "محبوب",
+            "nett": "لطيف",
+            "groß": "كبير",
+            "sympathisch": "ودود",
+            "auch": "أيضًا",
+            "noch": "مازال",
+            "nicht": "ليس",
+            "schon": "بالفعل",
+            "dort": "هناك",
+            "jetzt": "الآن",
+            "ein bisschen": "قليلاً",
+            "zusammen": "معًا",
+            "hier": "هنا",
+            "Wie?": "كيف؟",
+            "Woher?": "من أين؟",
+            "aus (Rio/Brasilien)": "من (ريو/البرازيل)",
+            "in (Rio/Brasilien)": "في (ريو/البرازيل)",
+            "denn": "لأن",
+            "ja": "نعم",
+            "Herzlich willkommen!": "أهلاً وسهلاً!",
+            "Freut mich!": "يسرني!",
+            "Viel Spaß!": "أتمنى لك الكثير من المرح!",
+            "Ich spreche …": "أنا أتكلم …",
+            "… gut …": "… جيد …",
+            "… nicht so gut …": "… ليس جيدًا …",
+            "… ein bisschen …": "… قليلاً …",
+            "Was fällt auf?": "ماذا يلاحظ؟",
+            "die Technik": "التقنية",
+            "der Plattenspieler": "مشغل الأسطوانات",
+            "die Schallplatte": "الأسطوانة",
+            "das Tablet": "الجهاز اللوحي",
+            "die Rechenmaschine": "آلة حاسبة",
+            "das Telefon": "الهاتف",
+            "das Navigationsgerät": "جهاز الملاحة",
+            "die Kamera": "الكاميرا",
+            "das Handy": "الهاتف المحمول",
+            "die Diskette": "القرص المرن",
+            "der Akku": "البطارية",
+            "die Kassette": "الكاسيت",
+            "die Musikkassette": "كاسيت الموسيقى",
+            "der USB-Stick": "الفلاشة",
+            "der Computer": "الكمبيوتر",
+            "der Laptop": "اللاب توب",
+            "das Smartphone": "الهاتف الذكي",
+            "das Foto": "الصورة",
+            "der Fotoapparat": "آلة التصوير",
+            "der mp3-Spieler": "مشغل MP3",
+            "der Stammbaum": "شجرة العائلة",
+            "der Partner": "الشريك",
+            "die Partnerin": "الشريكة",
+            "geschieden": "مطلق",
+            "getrennt leben": "يعيش منفصل",
+            "der Single": "الأعزب",
+            "heiraten": "يتزوج",
+            "verheiratet": "متزوج",
+            "erziehen": "يربي",
+            "die Familie": "العائلة",
+            "die Kleinfamilie": "العائلة الصغيرة",
+            "Patchworkfamilie": "العائلة المختلطة",
+            "das Mitglied": "العضو",
+            "das Familienmitglied": "عضو العائلة",
+            "die Eltern": "الوالدين",
+            "Schwiegereltern": "الوالدين من الزوج/الزوجة",
+            "der Vater": "الأب",
+            "die Mutter": "الأم",
+            "das Einzelkind": "الطفل الوحيد",
+            "der Sohn": "الابن",
+            "die Tochter": "الابنة",
+            "die Großeltern": "الأجداد",
+            "die Großmutter": "الجدة",
+            "der Großvater": "الجد",
+            "der Urgroßvater": "الجد الأكبر",
+            "die Urgroßmutter": "الجدة الأكبر",
+            "der Enkel": "الحفيد",
+            "die Enkelin": "الحفيدة",
+            "die Geschwister": "الإخوة والأخوات",
+            "der Bruder": "الأخ",
+            "die Schwester": "الأخت",
+            "der Schwager": "زوج الأخت",
+            "die Schwägerin": "زوجة الأخ",
+            "der Onkel": "العم / الخال",
+            "die Tante": "العمة / الخالة",
+            "der Neffe": "ابن الأخ / الأخت",
+            "die Nichte": "ابنة الأخ / الأخت",
+            "das Restaurant": "المطعم",
+            "der Gast": "الضيف",
+            "das Gericht": "الطبق",
+            "das Menü": "قائمة الطعام",
+            "die Vorspeise": "المقبلات",
+            "die Spezialität": "التخصص",
+            "das Wasser (hier nur Sg.)": "الماء",
+            "Mineralwasser": "ماء معدني",
+        };
+
+        const vocabularyList = {
+            "Basic Phrases": {
+                "Hallo – Hello",
+                "Guten Morgen – Good morning",
+                "Guten Tag – Good day",
+                "Guten Abend – Good evening",
+                "Gute Nacht – Good night",
+                "Tschüss – Bye",
+                "Auf Wiedersehen – Goodbye",
+                "Ja – Yes",
+                "Nein – No",
+                "Bitte – Please / You're welcome",
+                "Danke – Thank you",
+                "Entschuldigung – Excuse me / Sorry",
+                "Wie geht's? – How are you?",
+                "Mir geht es gut. – I'm doing well.",
+                "Wie heißt du? – What's your name?",
+                "Ich heiße… – My name is…",
+                "Woher kommst du? – Where are you from?",
+                "Ich komme aus… – I come from…"
+            },
+            "Numbers (Zahlen)": {
+                "Eins – One",
+                "Zwei – Two",
+                "Drei – Three",
+                "Vier – Four",
+                "Fünf – Five",
+                "Sechs – Six",
+                "Sieben – Seven",
+                "Acht – Eight",
+                "Neun – Nine",
+                "Zehn – Ten",
+                "Zwanzig – Twenty",
+                "Dreißig – Thirty",
+                "Hundert – One hundred",
+                "Tausend – Thousand"
+                },
+            "Days of the Week (Wochentage)": {
+                "Montag – Monday",
+                "Dienstag – Tuesday",
+                "Mittwoch – Wednesday",
+                "Donnerstag – Thursday",
+                "Freitag – Friday",
+                "Samstag – Saturday",
+                "Sonntag – Sunday"
+            },
+            "Months (Monate)": [
+                "Januar – January",
+                "Februar – February",
+                "März – March",
+                "April – April",
+                "Mai – May",
+                "Juni – June",
+                "Juli – July",
+                "August – August",
+                "September – September",
+                "Oktober – October",
+                "November – November",
+                "Dezember – December"
+            ],
+            "Family (Familie)": [
+                "Vater – Father",
+                "Mutter – Mother",
+                "Bruder – Brother",
+                "Schwester – Sister",
+                "Sohn – Son",
+                "Tochter – Daughter",
+                "Eltern – Parents",
+                "Großvater – Grandfather",
+                "Großmutter – Grandmother"
+            ],
+            "Colors (Farben)": [
+                "Rot – Red",
+                "Blau – Blue",
+                "Gelb – Yellow",
+                "Grün – Green",
+                "Schwarz – Black",
+                "Weiß – White",
+                "Grau – Gray",
+                "Braun – Brown",
+                "Rosa – Pink"
+            ],
+            "Professions (Berufe)": [
+                "Lehrer – Teacher (male)",
+                "Lehrerin – Teacher (female)",
+                "Arzt – Doctor (male)",
+                "Ärztin – Doctor (female)",
+                "Ingenieur – Engineer (male)",
+                "Ingenieurin – Engineer (female)",
+                "Verkäufer – Salesman",
+                "Verkäuferin – Saleswoman",
+                "Student – Student (male)",
+                "Studentin – Student (female)",
+                "Kellner – Waiter",
+                "Kellnerin – Waitress"
+            ],
+            "Food & Drinks (Essen & Trinken)": [
+                "Brot – Bread",
+                "Wasser – Water",
+                "Milch – Milk",
+                "Kaffee – Coffee",
+                "Tee – Tea",
+                "Apfel – Apple",
+                "Banane – Banana",
+                "Kartoffel – Potato",
+                "Fleisch – Meat",
+                "Fisch – Fish",
+                "Käse – Cheese",
+                "Butter – Butter",
+                "Salz – Salt",
+                "Zucker – Sugar"
+            ],
+            "Body Parts (Körperteile)": [
+                "Kopf – Head",
+                "Auge – Eye",
+                "Ohr – Ear",
+                "Nase – Nose",
+                "Mund – Mouth",
+                "Hand – Hand",
+                "Arm – Arm",
+                "Bein – Leg",
+                "Fuß – Foot"
+            ],
+            "Weather (Wetter)": [
+                "Sonne – Sun",
+                "Regen – Rain",
+                "Schnee – Snow",
+                "Wind – Wind",
+                "Wolke – Cloud",
+                "Heiß – Hot",
+                "Kalt – Cold",
+                "Warm – Warm",
+                "Kühl – Cool"
+            ],
+            "Common Verbs (Verben)": [
+                "Sein – To be",
+                "Haben – To have",
+                "Gehen – To go",
+                "Kommen – To come",
+                "Machen – To do/make",
+                "Sprechen – To speak",
+                "Essen – To eat",
+                "Trinken – To drink",
+                "Lesen – To read",
+                "Schreiben – To write",
+                "Sehen – To see",
+                "Hören – To hear",
+                "Schlafen – To sleep"
+            ],
+            "Question Words (Fragewörter)": [
+                "Wer? – Who?",
+                "Was? – What?",
+                "Wo? – Where?",
+                "Wann? – When?",
+                "Warum? – Why?",
+                "Wie? – How?",
+                "Wie viel? – How much?",
+                "Wie viele? – How many?"
+            ],
+            "Directions (Richtungen)": [
+                "Links – Left",
+                "Rechts – Right",
+                "Geradeaus – Straight ahead",
+                "Zurück – Back",
+                "Hier – Here",
+                "Dort – There"
+            ],
+            "Household Items (Haushaltsgegenstände)": [
+                "Tisch – Table",
+                "Stuhl – Chair",
+                "Bett – Bed",
+                "Tür – Door",
+                "Fenster – Window",
+                "Lampe – Lamp",
+                "Fernseher – Television",
+                "Kühlschrank – Refrigerator",
+                "Spiegel – Mirror"
+            ],
+            "Time (Zeit)": [
+                "Stunde – Hour",
+                "Minute – Minute",
+                "Sekunde – Second",
+                "Tag – Day",
+                "Woche – Week",
+                "Monat – Month",
+                "Jahr – Year",
+                "Heute – Today",
+                "Morgen – Tomorrow",
+                "Gestern – Yesterday"
+            ],
+            "Prepositions (Präpositionen)": [
+                "In – In",
+                "Auf – On",
+                "Unter – Under",
+                "Neben – Next to",
+                "Vor – In front of",
+                "Hinter – Behind"
+            },
+            // ... Add all other categories here
         };
 
         let score = 0;
@@ -178,12 +580,14 @@
             document.querySelector('#addWordContainer').style.display = 'block';
             document.querySelector('#quizContainer').style.display = 'none';
             document.querySelector('#wordList').style.display = 'none';
+            document.querySelector('#vocabularyListContainer').style.display = 'none';
         });
 
         document.querySelector('#startQuizBtn').addEventListener('click', () => {
             document.querySelector('#quizContainer').style.display = 'block';
             document.querySelector('#addWordContainer').style.display = 'none';
             document.querySelector('#wordList').style.display = 'none';
+            document.querySelector('#vocabularyListContainer').style.display = 'none';
             startQuiz();
         });
 
@@ -197,6 +601,27 @@
             document.querySelector('#wordList').style.display = 'block';
             document.querySelector('#addWordContainer').style.display = 'none';
             document.querySelector('#quizContainer').style.display = 'none';
+            document.querySelector('#vocabularyListContainer').style.display = 'none';
+        });
+
+        document.querySelector('#viewVocabularyBtn').addEventListener('click', () => {
+            document.querySelector('#vocabularyList').innerHTML = '';
+            Object.keys(vocabularyList).forEach(category => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.classList.add('vocabulary-category');
+                categoryDiv.innerHTML = `<h3>${category}</h3>`;
+                Object.keys(vocabularyList[category]).forEach(word => {
+                    const wordDiv = document.createElement('div');
+                    wordDiv.classList.add('vocabulary-item');
+                    wordDiv.innerHTML = `<span>${word}</span><span>${vocabularyList[category][word]}</span>`;
+                    categoryDiv.appendChild(wordDiv);
+                });
+                document.querySelector('#vocabularyList').appendChild(categoryDiv);
+            });
+            document.querySelector('#vocabularyListContainer').style.display = 'block';
+            document.querySelector('#addWordContainer').style.display = 'none';
+            document.querySelector('#quizContainer').style.display = 'none';
+            document.querySelector('#wordList').style.display = 'none';
         });
 
         document.querySelector('#addWordAction').addEventListener('click', () => {
