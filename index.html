@@ -5,50 +5,155 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>German-Arabic Vocabulary Quiz Game</title>
     <style>
-        /* Same CSS as before */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+
+        #wordList {
+            margin-top: 20px;
+        }
+
+        #wordList div {
+            background-color: #ecf0f1;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+        }
+
+        #quizContainer,
+        #addWordContainer {
+            display: none;
+        }
+
+        #answerOptions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .answerOption {
+            width: 48%;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+        }
+
+        .answerOption:hover {
+            background-color: #2980b9;
+        }
+
+        .answerOption.selected {
+            background-color: #f39c12;
+            font-weight: bold;
+        }
+
+        .answerOption.correct {
+            background-color: #2ecc71;
+        }
+
+        .answerOption.incorrect {
+            background-color: #e74c3c;
+        }
+
+        .quizType {
+            margin-bottom: 20px;
+        }
+
+        #question {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            background-color: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        #question span {
+            color: #e74c3c;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>German-Arabic Vocabulary Game</h1>
+        <h1>German-Arabic Vocabulary Quiz Game</h1>
         <div id="menu">
-            <button id="addWordBtn">Add New Word</button>
-            <button id="startQuizBtn">Start Quiz</button>
-            <button id="challengeModeBtn">Challenge Mode</button>
-            <button id="wordMatchBtn">Word Matching</button>
-            <button id="fillBlankBtn">Fill in the Blanks</button>
-            <button id="viewWordsBtn">View All Words</button>
+            <button id="addWordBtn">Add a new word</button>
+            <button id="startQuizBtn">Start quiz</button>
+            <button id="viewWordsBtn">View all words</button>
         </div>
 
-        <!-- Add Word Container -->
         <div id="addWordContainer">
             <h2>Add a new word</h2>
-            <input type="text" id="germanWord" placeholder="Enter German word">
-            <input type="text" id="arabicTranslation" placeholder="Enter Arabic translation">
+            <input type="text" id="germanWord" placeholder="Enter the German word">
+            <input type="text" id="arabicTranslation" placeholder="Enter the Arabic translation">
             <button id="addWordAction">Add Word</button>
         </div>
 
-        <!-- Quiz Container -->
         <div id="quizContainer">
-            <h2>Translate the Word</h2>
+            <h2>Quiz</h2>
+            <div class="quizType">
+                <label>
+                    <input type="radio" name="quizType" value="translate" checked> Translate
+                </label>
+                <label>
+                    <input type="radio" name="quizType" value="choose"> Choose Correct Answer
+                </label>
+            </div>
             <p id="question"></p>
             <div id="answerOptions"></div>
-            <button id="hintBtn">Hint</button>
-            <button id="lifelineBtn">50-50 Lifeline</button>
             <p id="result"></p>
             <p id="score"></p>
         </div>
 
-        <!-- Challenge Mode Container -->
-        <div id="challengeContainer">
-            <h2>Challenge Mode: Translate the Word</h2>
-            <p id="challengeQuestion"></p>
-            <div id="challengeAnswerOptions"></div>
-            <p id="lives"></p>
-            <p id="challengeResult"></p>
-        </div>
-
-        <!-- Additional containers for other functionalities -->
+        <div id="wordList"></div>
     </div>
 
     <script>
@@ -56,199 +161,44 @@
             "der Name": "الاسم",
             "der Vorname": "الاسم الأول",
             "der Familienname": "اسم العائلة",
-            "der Nachname": "الكنية",
-            "die Straße": "الشارع",
-            "die Hausnummer": "رقم المنزل",
-            "die Nationalität": "الجنسية",
-            "der Wohnort": "مكان السكن",
-            "die Postleitzahl (PLZ)": "الرمز البريدي",
-            "das Telefon": "الهاتف",
+            "die Adresse": "العنوان",
             "die Telefonnummer": "رقم الهاتف",
-            "die Handynummer": "رقم الهاتف المحمول",
-            "das Handy": "الهاتف المحمول",
-            "die E-Mail-Adresse": "عنوان البريد الإلكتروني",
-            "das Sprachenzentrum": "مركز اللغات",
-            "das Gespräch": "المحادثة",
-            "der Kursteilnehmer": "المشارك في الدورة",
-            "die Kursteilnehmerin": "المشاركة في الدورة",
-            "die Sprache": "اللغة",
-            "die Muttersprache": "اللغة الأم",
-            "die Zielsprache": "اللغة المستهدفة",
-            "der Tandempartner": "شريك التبادل اللغوي",
-            "die Tandempartnerin": "شريكة التبادل اللغوي",
-            "die Sprachschule": "مدرسة اللغات",
-            "der Kurs": "الدورة",
-            "der Intensivkurs": "الدورة المكثفة",
-            "der Vorbereitungskurs": "دورة التحضير",
-            "der Sommerkurs": "دورة الصيف",
-            "lernen": "التعلم",
-            "verstehen": "الفهم",
-            "sprechen": "التحدث",
-            "fragen": "السؤال",
-            "schreiben": "الكتابة",
-            "buchstabieren": "تهجئة",
-            "die Universität": "الجامعة",
-            "der Student": "الطالب",
-            "die Studentin": "الطالبة",
-            "der Studierende": "الدارس",
-            "der Professor": "الأستاذ",
-            "die Professorin": "الأستاذة",
-            "das Studienfach": "التخصص الدراسي",
-            "die Architektur": "الهندسة المعمارية",
-            "die Wirtschaftswissenschaften (Pl)": "العلوم الاقتصادية",
-            "die Chemie": "الكيمياء",
-            "die Elektrotechnik": "الهندسة الكهربائية",
-            "die Germanistik": "الدراسات الألمانية",
-            "die Informatik": "علوم الحاسوب",
-            "Jura (Pl)": "القانون",
-            "die Rechtswissenschaften (Pl)": "العلوم القانونية",
-            "die Mathematik": "الرياضيات",
-            "die Medizin": "الطب",
-            "die Philosophie": "الفلسفة",
-            "die Physik": "الفيزياء",
-            "studieren": "الدراسة",
-            "der Lehrer": "المعلم",
-            "die Lehrerin": "المعلمة",
-            "der Sprachlehrer": "مدرس اللغة",
-            "der Deutschlehrer": "مدرس اللغة الألمانية",
-            "die Ingenieurin": "المهندسة",
-            "die Schüler": "التلاميذ",
-            "die Schülerin": "التلميذة",
-            "der Schriftsteller": "الكاتب",
-            "die Schriftstellerin": "الكاتبة",
-            "das Praktikum": "التدريب العملي",
-            "arbeiten (als …)": "العمل (كـ …)",
-            "das Hobby": "الهواية",
-            "Afrika": "أفريقيا",
-            "Amerika": "أمريكا",
-            "Asien": "آسيا",
-            "Australien": "أستراليا",
-            "Europa": "أوروبا",
-            "das Auto": "السيارة",
-            "das Genie": "العبقري",
-            "die Zahl": "العدد",
-            "der Nobelpreis": "جائزة نوبل",
-            "die Million": "المليون",
-            "die Milliarde": "المليار",
-            "das Interview": "المقابلة",
-            "die Literatur": "الأدب",
-            "heißen": "يدعى",
-            "kommen": "يأتي",
-            "vorstellen (sich)": "يقدم (نفسه)",
-            "wohnen": "يسكن",
-            "machen": "يعمل",
-            "beginnen": "يبدأ",
-            "sein": "يكون",
-            "gut": "جيد",
-            "neu": "جديد",
-            "polyglott": "متعدد اللغات",
-            "international": "دولي",
-            "beliebt": "محبوب",
-            "nett": "لطيف",
-            "groß": "كبير",
-            "sympathisch": "ودود",
-            "auch": "أيضًا",
-            "noch": "مازال",
-            "nicht": "ليس",
-            "schon": "بالفعل",
-            "dort": "هناك",
-            "jetzt": "الآن",
-            "ein bisschen": "قليلاً",
-            "zusammen": "معًا",
-            "hier": "هنا",
-            "Wie?": "كيف؟",
-            "Woher?": "من أين؟",
-            "aus (Rio/Brasilien)": "من (ريو/البرازيل)",
-            "in (Rio/Brasilien)": "في (ريو/البرازيل)",
-            "denn": "لأن",
-            "ja": "نعم",
-            "Herzlich willkommen!": "أهلاً وسهلاً!",
-            "Freut mich!": "يسرني!",
-            "Viel Spaß!": "أتمنى لك الكثير من المرح!",
-            "Ich spreche …": "أنا أتكلم …",
-            "… gut …": "… جيد …",
-            "… nicht so gut …": "… ليس جيدًا …",
-            "… ein bisschen …": "… قليلاً …",
-            "Was fällt auf?": "ماذا يلاحظ؟",
-            "die Technik": "التقنية",
-            "der Plattenspieler": "مشغل الأسطوانات",
-            "die Schallplatte": "الأسطوانة",
-            "das Tablet": "الجهاز اللوحي",
-            "die Rechenmaschine": "آلة حاسبة",
-            "das Telefon": "الهاتف",
-            "das Navigationsgerät": "جهاز الملاحة",
-            "die Kamera": "الكاميرا",
-            "das Handy": "الهاتف المحمول",
-            "die Diskette": "القرص المرن",
-            "der Akku": "البطارية",
-            "die Kassette": "الكاسيت",
-            "die Musikkassette": "كاسيت الموسيقى",
-            "der USB-Stick": "الفلاشة",
-            "der Computer": "الكمبيوتر",
-            "der Laptop": "اللاب توب",
-            "das Smartphone": "الهاتف الذكي",
-            "das Foto": "الصورة",
-            "der Fotoapparat": "آلة التصوير",
-            "der mp3-Spieler": "مشغل MP3",
-            "der Stammbaum": "شجرة العائلة",
-            "der Partner": "الشريك",
-            "die Partnerin": "الشريكة",
-            "geschieden": "مطلق",
-            "getrennt leben": "يعيش منفصل",
-            "der Single": "الأعزب",
-            "heiraten": "يتزوج",
-            "verheiratet": "متزوج",
-            "erziehen": "يربي",
-            "die Familie": "العائلة",
-            "die Kleinfamilie": "العائلة الصغيرة",
-            "Patchworkfamilie": "العائلة المختلطة",
-            "das Mitglied": "العضو",
-            "das Familienmitglied": "عضو العائلة",
-            "die Eltern": "الوالدين",
-            "Schwiegereltern": "الوالدين من الزوج/الزوجة",
-            "der Vater": "الأب",
-            "die Mutter": "الأم",
-            "das Einzelkind": "الطفل الوحيد",
-            "der Sohn": "الابن",
-            "die Tochter": "الابنة",
-            "die Großeltern": "الأجداد",
-            "die Großmutter": "الجدة",
-            "der Großvater": "الجد",
-            "der Urgroßvater": "الجد الأكبر",
-            "die Urgroßmutter": "الجدة الأكبر",
-            "der Enkel": "الحفيد",
-            "die Enkelin": "الحفيدة",
-            "die Geschwister": "الإخوة والأخوات",
-            "der Bruder": "الأخ",
-            "die Schwester": "الأخت",
-            "der Schwager": "زوج الأخت",
-            "die Schwägerin": "زوجة الأخ",
-            "der Onkel": "العم / الخال",
-            "die Tante": "العمة / الخالة",
-            "der Neffe": "ابن الأخ / الأخت",
-            "die Nichte": "ابنة الأخ / الأخت",
-            "das Restaurant": "المطعم",
-            "der Gast": "الضيف",
-            "das Gericht": "الطبق",
-            "das Menü": "قائمة الطعام",
-            "die Vorspeise": "المقبلات",
-            "die Spezialität": "التخصص",
-            "das Wasser (hier nur Sg.)": "الماء",
-            "Mineralwasser": "ماء معدني",
-            // Other words...
+            "die E-Mail": "البريد الإلكتروني",
+            "das Alter": "العمر",
+            "der Geburtstag": "عيد الميلاد",
+            "der Beruf": "المهنة",
+            "die Nationalität": "الجنسية"
         };
 
         let score = 0;
-        let lives = 3; // For challenge mode
         let currentWord = '';
+        let currentQuizType = 'translate';
 
-        // Add New Word Event
         document.querySelector('#addWordBtn').addEventListener('click', () => {
-            hideAllContainers();
             document.querySelector('#addWordContainer').style.display = 'block';
+            document.querySelector('#quizContainer').style.display = 'none';
+            document.querySelector('#wordList').style.display = 'none';
         });
 
-        // Add Word Action
+        document.querySelector('#startQuizBtn').addEventListener('click', () => {
+            document.querySelector('#quizContainer').style.display = 'block';
+            document.querySelector('#addWordContainer').style.display = 'none';
+            document.querySelector('#wordList').style.display = 'none';
+            startQuiz();
+        });
+
+        document.querySelector('#viewWordsBtn').addEventListener('click', () => {
+            document.querySelector('#wordList').innerHTML = '';
+            Object.keys(wordDict).forEach(word => {
+                const wordDiv = document.createElement('div');
+                wordDiv.textContent = `${word} - ${wordDict[word]}`;
+                document.querySelector('#wordList').appendChild(wordDiv);
+            });
+            document.querySelector('#wordList').style.display = 'block';
+            document.querySelector('#addWordContainer').style.display = 'none';
+            document.querySelector('#quizContainer').style.display = 'none';
+        });
+
         document.querySelector('#addWordAction').addEventListener('click', () => {
             const germanWord = document.querySelector('#germanWord').value.trim();
             const arabicTranslation = document.querySelector('#arabicTranslation').value.trim();
@@ -263,141 +213,100 @@
             }
         });
 
-        // Start Quiz Event
-        document.querySelector('#startQuizBtn').addEventListener('click', () => {
-            hideAllContainers();
-            document.querySelector('#quizContainer').style.display = 'block';
-            startQuiz();
+        document.querySelectorAll('input[name="quizType"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                currentQuizType = e.target.value;
+                startQuiz();
+            });
         });
 
-        // Challenge Mode Event
-        document.querySelector('#challengeModeBtn').addEventListener('click', () => {
-            hideAllContainers();
-            document.querySelector('#challengeContainer').style.display = 'block';
-            lives = 3; // Reset lives
-            startChallenge();
-        });
-
-        // Start Quiz Function
         function startQuiz() {
             const words = Object.keys(wordDict);
             currentWord = words[Math.floor(Math.random() * words.length)];
-            document.querySelector('#question').innerHTML = `Translate this word: <span>${currentWord}</span>`;
-
-            const correctAnswer = wordDict[currentWord];
-            const options = generateOptions(correctAnswer);
-
-            displayAnswerOptions('#answerOptions', options, correctAnswer, 'quiz');
-            document.querySelector('#result').textContent = '';
-            document.querySelector('#score').textContent = `Score: ${score}`;
-        }
-
-        // Challenge Mode Function
-        function startChallenge() {
-            const words = Object.keys(wordDict);
-            currentWord = words[Math.floor(Math.random() * words.length)];
-            document.querySelector('#challengeQuestion').innerHTML = `Translate this word: <span>${currentWord}</span>`;
-
-            const correctAnswer = wordDict[currentWord];
-            const options = generateOptions(correctAnswer);
-
-            displayAnswerOptions('#challengeAnswerOptions', options, correctAnswer, 'challenge');
-            document.querySelector('#lives').textContent = `Lives: ${lives}`;
-        }
-
-        // Generate Options for Multiple Choice
-        function generateOptions(correctAnswer) {
-            const words = Object.keys(wordDict);
-            const options = [correctAnswer];
-
+            
+            if (currentQuizType === 'translate') {
+                document.querySelector('#question').innerHTML = `Translate this word: <span>${currentWord}</span>`;
+            } else {
+                document.querySelector('#question').innerHTML = `Choose the correct German word for: <span>${wordDict[currentWord]}</span>`;
+            }
+            
+            const answerOptions = document.querySelector('#answerOptions');
+            answerOptions.innerHTML = '';
+            
+            // Generate 4 answer options
+            const options = currentQuizType === 'translate' ? [wordDict[currentWord]] : [currentWord];
             while (options.length < 4) {
-                const randomWord = wordDict[words[Math.floor(Math.random() * words.length)]];
-                if (!options.includes(randomWord)) {
-                    options.push(randomWord);
+                const randomWord = words[Math.floor(Math.random() * words.length)];
+                const optionToAdd = currentQuizType === 'translate' ? wordDict[randomWord] : randomWord;
+                if (!options.includes(optionToAdd)) {
+                    options.push(optionToAdd);
                 }
             }
-
-            return options.sort(() => Math.random() - 0.5);
-        }
-
-        // Display Answer Options
-        function displayAnswerOptions(containerId, options, correctAnswer, mode) {
-            const answerOptions = document.querySelector(containerId);
-            answerOptions.innerHTML = '';
-
+            
+            // Shuffle options
+            options.sort(() => Math.random() - 0.5);
+            
             options.forEach(option => {
                 const button = document.createElement('button');
                 button.textContent = option;
                 button.classList.add('answerOption');
-                button.addEventListener('click', () => checkAnswer(button, correctAnswer, mode));
+                button.addEventListener('click', () => selectAnswer(button));
                 answerOptions.appendChild(button);
             });
+            
+            document.querySelector('#result').textContent = '';
+            document.querySelector('#score').textContent = `Score: ${score}`;
         }
 
-        // Check Answer Function
-        function checkAnswer(button, correctAnswer, mode) {
-            if (button.textContent === correctAnswer) {
-                button.classList.add('correct');
-                if (mode === 'quiz') {
-                    score++;
-                    document.querySelector('#result').textContent = 'Correct!';
-                    document.querySelector('#score').textContent = `Score: ${score}`;
-                } else if (mode === 'challenge') {
-                    document.querySelector('#challengeResult').textContent = 'Correct!';
-                }
-            } else {
-                button.classList.add('incorrect');
-                if (mode === 'quiz') {
-                    document.querySelector('#result').textContent = `Incorrect! The correct answer was ${correctAnswer}.`;
-                } else if (mode === 'challenge') {
-                    lives--;
-                    document.querySelector('#challengeResult').textContent = `Incorrect! The correct answer was ${correctAnswer}. Lives left: ${lives}`;
-                    document.querySelector('#lives').textContent = `Lives: ${lives}`;
-
-                    if (lives === 0) {
-                        alert('Game Over! Try again.');
-                        startChallenge(); // Restart Challenge Mode
-                    }
-                }
-            }
-
-            setTimeout(() => {
-                if (mode === 'quiz') {
-                    startQuiz();
-                } else if (mode === 'challenge') {
-                    startChallenge();
-                }
-            }, 1500);
+        function selectAnswer(selectedButton) {
+            document.querySelectorAll('.answerOption').forEach(button => {
+                button.classList.remove('selected');
+            });
+            selectedButton.classList.add('selected');
         }
 
-        // Hint Functionality
-        document.querySelector('#hintBtn').addEventListener('click', () => {
-            const firstLetter = wordDict[currentWord].charAt(0);
-            document.querySelector('#result').textContent = `Hint: The correct answer starts with "${firstLetter}".`;
-        });
+        function checkAnswer() {
+            const selectedButton = document.querySelector('.answerOption.selected');
+            if (!selectedButton) return;
 
-        // Lifeline (50-50) Functionality
-        document.querySelector('#lifelineBtn').addEventListener('click', () => {
+            const userAnswer = selectedButton.textContent;
+            const correctAnswer = currentQuizType === 'translate' ? wordDict[currentWord] : currentWord;
             const answerOptions = document.querySelectorAll('.answerOption');
-            let incorrectOptions = [];
             
             answerOptions.forEach(option => {
-                if (option.textContent !== wordDict[currentWord]) {
-                    incorrectOptions.push(option);
+                option.disabled = true;
+                if (option.textContent === correctAnswer) {
+                    option.classList.add('correct');
+                } else if (option.textContent === userAnswer && userAnswer !== correctAnswer) {
+                    option.classList.add('incorrect');
                 }
             });
 
-            // Randomly remove 2 incorrect options
-            incorrectOptions.sort(() => Math.random() - 0.5).slice(0, 2).forEach(option => {
-                option.style.display = 'none';
-            });
+            if (userAnswer === correctAnswer) {
+                document.querySelector('#result').textContent = 'Correct!';
+                score++;
+            } else {
+                document.querySelector('#result').textContent = `Wrong. The correct answer was ${correctAnswer}.`;
+            }
+
+            document.querySelector('#score').textContent = `Score: ${score}`;
+            
+            setTimeout(() => {
+                answerOptions.forEach(option => {
+                    option.classList.remove('correct', 'incorrect', 'selected');
+                    option.disabled = false;
+                });
+                startQuiz();
+            }, 2000);
+        }
+
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('answerOption')) {
+                checkAnswer();
+            }
         });
 
-        function hideAllContainers() {
-            document.querySelectorAll('.container > div').forEach(div => {
-                div.style.display = 'none';
-            });
-        }
+        startQuiz();
     </script>
 </body>
 </html>
